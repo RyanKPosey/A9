@@ -1,157 +1,33 @@
 /**
  * @file main.cpp
- * @brief Lab A8 driver for InventorySystem<T> with BookType and string.
+ * @brief CS 1C Lab A9 - Exception handling with try/catch.
  */
 
-#include "InventorySystem.h"
-#include "bookType.h"
-
 #include <iostream>
-#include <string>
 
-BookType makeIsbnKey(const std::string &isbn) {
-    return BookType("", isbn, "", "", "", 0, 0.0f, 0.0f);
-}
+using namespace std;
 
 int main() {
-    using std::cout;
-    using std::string;
 
-    cout << "======================================\n";
-    cout << "  Serendipity Book Store - Inventory\n";
-    cout << "======================================\n\n";
+    int dividend = 0;
+    int divisor = 0;
+    int quotient = 0;
 
-    InventorySystem<BookType> inventory;
+    cout << "Enter the dividend: ";
+    cin >> dividend;
 
-    BookType b1("Cool Awesome book", "978-4-391-56384-4",
-                "Cool Awesome Guy", "Penguin Haus", "03/30/2026", 8,
-                54.50f, 79.99f);
-    BookType b2("Coding for Kool Kidz", "948-0-132-35088-4", "Ryan R. Ryan",
-                "Super Cool Publisher", "04/04/2026", 40, 40.00f, 40.00f);
-    BookType b3("Linear Linearity", "978-0-201-63364-0",
-                "Super Cool Awesome Guy", "Publisher",
-                "03/06/2026", 5, 33.36f, 64.99f);
-    BookType b4("Effective Special Stuff", "978-0-321-33487-9", "Super DUper Cool Stuff",
-                "O'Ryan", "04/06/2026", 9, 40.00f, 44.95f);
+    cout << "Enter the divisor: ";
+    cin >> divisor;
 
-    cout << "--- 1) Adding books to inventory ---\n";
-    inventory.add(b1);
-    cout << "Added: \"" << b1.getTitle() << "\" (ISBN: " << b1.getISBN() << ")\n";
-    inventory.add(b2);
-    cout << "Added: \"" << b2.getTitle() << "\" (ISBN: " << b2.getISBN() << ")\n";
-    inventory.add(b3);
-    cout << "Added: \"" << b3.getTitle() << "\" (ISBN: " << b3.getISBN() << ")\n";
-    inventory.add(b4);
-    cout << "Added: \"" << b4.getTitle() << "\" (ISBN: " << b4.getISBN() << ")\n\n";
-
-    cout << "--- 2) Full inventory print ---\n";
-    inventory.print();
-    cout << '\n';
-
-    cout << "--- 3) Search (found) by ISBN ---\n";
-    BookType foundKey = makeIsbnKey("978-0-132-35088-4");
-    int foundIndex = inventory.search(foundKey);
-    cout << "Searching for " << foundKey.getISBN() << "... ";
-    if (foundIndex != -1) {
-        cout << "Found at index " << foundIndex << "\n\n";
-    } else {
-        cout << "Not found\n\n";
-    }
-
-    cout << "--- 4) Search (not found) ---\n";
-    BookType missingKey = makeIsbnKey("000-0-000-00000-0");
-    int missingIndex = inventory.search(missingKey);
-    cout << "Searching for " << missingKey.getISBN() << "... ";
-    if (missingIndex != -1) {
-        cout << "Found at index " << missingIndex << "\n\n";
-    } else {
-        cout << "Not found\n\n";
-    }
-
-    cout << "--- 5) Sort by retail price (before/after) ---\n";
-    cout << "Before sort:\n";
-    inventory.print();
-    cout << "\nAfter sort:\n";
-    inventory.sort();
-    inventory.print();
-    cout << '\n';
-
-    cout << "--- 6) Remove a book ---\n";
-    BookType removeKey = makeIsbnKey("978-0-132-35088-4");
-    cout << "Removing ISBN " << removeKey.getISBN() << "... ";
-    if (inventory.remove(removeKey)) {
-        cout << "Removed successfully\n";
-    } else {
-        cout << "Not found\n";
-    }
-    inventory.print();
-    cout << '\n';
-
-    cout << "--- 7) Remove (not found) ---\n";
-    cout << "Removing ISBN " << missingKey.getISBN() << "... ";
-    if (inventory.remove(missingKey)) {
-        cout << "Removed successfully\n\n";
-    } else {
-        cout << "Not found\n\n";
-    }
-
-    cout << "--- 8) Access with operator[] ---\n";
-    cout << "Book at index 0: " << inventory[0].getTitle() << "\n\n";
-
-    cout << "--- 9) Bounds check ---\n";
     try {
-        cout << "Accessing index 99...\n";
-        cout << inventory[99];
-    } catch (const std::out_of_range &e) {
-        cout << "Exception caught: " << e.what() << "\n\n";
-    }
+        if (divisor == 0) {
+            throw divisor;
+        }
 
-    cout << "--- 10) isEmpty / isFull checks ---\n";
-    cout << "isEmpty(): " << (inventory.isEmpty() ? "true" : "false") << '\n';
-    cout << "isFull(): " << (inventory.isFull() ? "true" : "false") << "\n\n";
-
-    cout << "--- 11) Add when full ---\n";
-    while (!inventory.isFull()) {
-        int n = inventory.getCount() + 1;
-        string isbn = "978-0-000-000" + std::to_string(n);
-        BookType filler("Filler Book " + std::to_string(n), isbn, "Staff",
-                        "Serendipity Press", "03/15/2026", n, 1.0f * n,
-                        2.0f * n);
-        inventory.add(filler);
-    }
-    cout << "Inventory now full? " << (inventory.isFull() ? "true" : "false")
-         << '\n';
-    BookType overflow("Overflow Book", "999-9-999-99999-9", "Overflow Author",
-                      "Overflow Pub", "03/15/2026", 1, 5.0f, 9.99f);
-    inventory.add(overflow);
-    cout << "Count after overflow add attempt: " << inventory.getCount() << "\n\n";
-
-    cout << "======================================\n";
-    cout << "  Customer Name List (string test)\n";
-    cout << "======================================\n\n";
-
-    InventorySystem<string> customers;
-
-    cout << "--- Adding customers ---\n";
-    customers.add("Guy With Cool Name");
-    cout << "Added: Guy With Cool Name\n";
-    customers.add("Another Guy With Cool Name");
-    cout << "Added: Another Guy With Cool Name\n";
-    customers.add("One Final Guy With Cool Name");
-    cout << "Added: One Final Guy With Cool Name\n\n";
-
-    cout << "--- Sorted alphabetically ---\n";
-    customers.sort();
-    customers.print();
-    cout << '\n';
-
-    cout << "--- Search ---\n";
-    int customerIndex = customers.search("Guy With Cool Name");
-    cout << "Searching for \"Guy With Cool Name\"... ";
-    if (customerIndex != -1) {
-        cout << "Found at index " << customerIndex << '\n';
-    } else {
-        cout << "Not found\n";
+        quotient = dividend / divisor;
+        cout << "Quotient = " << quotient << endl;
+    } catch (int) { // catch divisor error
+        cout << "Error: Cannot divide by zero." << endl;
     }
 
     return 0;
